@@ -10,6 +10,9 @@ struct GameObject {
 	virtual bool	CheckCollision(GameObject* other);
 	void			Draw(sf::RenderWindow& window);
 
+	void			SetPositionByVec2(const sf::Vector2f& vec);
+	void			SetPositionByValues(const float& x, const float& y);
+
 	const int32&	GetCollisionLayer() const;
 	const bool&		ShouldDestroy() const;
 

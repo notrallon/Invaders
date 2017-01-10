@@ -20,6 +20,14 @@ void GameObject::Draw(sf::RenderWindow& window) {
 	window.draw(m_Sprite);
 }
 
+void GameObject::SetPositionByVec2(const sf::Vector2f& vec) {
+	m_Sprite.setPosition(vec);
+}
+
+void GameObject::SetPositionByValues(const float& x, const float& y) {
+	m_Sprite.setPosition(sf::Vector2f(x, y));
+}
+
 const int32& GameObject::GetCollisionLayer() const {
 	return m_CollisionLayer;
 }

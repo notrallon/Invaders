@@ -5,7 +5,7 @@
 Game::Game() : m_FullScreen(false), m_Running(true) {
 	uint32 style = (m_FullScreen ? sf::Style::Fullscreen : sf::Style::Close);
 	m_Window.create({ 1280, 720, 32 }, "Invaders", style);
-	m_Window.setFramerateLimit(60);
+	m_Window.setFramerateLimit(125);
 
 	sf::Texture* playerTexture = new sf::Texture;
 	if (!playerTexture->loadFromFile("assets/sprites/ship.png")) {
@@ -22,6 +22,10 @@ Game::Game() : m_FullScreen(false), m_Running(true) {
 
 	Enemy* enemy = new Enemy(*enemyTexture);
 	m_gos.push_back(enemy);
+
+	enemy = new Enemy(*enemyTexture);
+	enemy->SetPositionByValues(250, 250);
+	m_gos.push_back(enemy);
 }
 
 Game::~Game() {
@@ -36,7 +40,7 @@ void Game::HandleEvents() {
 				m_Running = false;
 			} break;
 			
-		default: {
+			default: {
 			} break;
 		}
 	}
@@ -70,6 +74,10 @@ void Game::Quit() {
 
 const bool& Game::IsRunning() const {
 	return m_Running;
+}
+
+const sf::RenderWindow& Game::GetWindow() const {
+	return m_Window;
 }
 
 void Game::RestartClock() {

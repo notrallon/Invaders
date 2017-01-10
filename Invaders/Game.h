@@ -4,16 +4,17 @@
 #include "GameObject.h"
 
 struct Game {
-						Game();
-						~Game();
+								Game();
+								~Game();
 
-	void				HandleEvents();
-	void				Update();
-	void				LateUpdate();
-	void				Draw();
-	void				Quit();
+	void						HandleEvents();
+	void						Update();
+	void						LateUpdate();
+	void						Draw();
+	void						Quit();
 
-	const bool&			IsRunning() const;
+	const bool&					IsRunning() const;
+	const sf::RenderWindow&		GetWindow() const;
 
 private:
 	sf::RenderWindow			m_Window;

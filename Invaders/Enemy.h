@@ -7,4 +7,7 @@ struct Enemy : public GameObject {
 					~Enemy();
 
 	virtual void	Update(float dt);
+
+private:
+	int m_Dir;
 };
