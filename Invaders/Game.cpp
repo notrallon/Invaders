@@ -1,5 +1,6 @@
 #include "Game.h"
 #include "Player.h"
+#include "Enemy.h"
 
 Game::Game() : m_FullScreen(false), m_Running(true) {
 	uint32 style = (m_FullScreen ? sf::Style::Fullscreen : sf::Style::Close);
@@ -7,14 +8,20 @@ Game::Game() : m_FullScreen(false), m_Running(true) {
 	m_Window.setFramerateLimit(60);
 
 	sf::Texture* playerTexture = new sf::Texture;
-	
 	if (!playerTexture->loadFromFile("assets/sprites/ship.png")) {
 		std::cout << "Could not load playertexture!\n";
 	}
 
 	Player* player = new Player(*playerTexture);
-
 	m_gos.push_back(player);
+
+	sf::Texture* enemyTexture = new sf::Texture;
+	if (!enemyTexture->loadFromFile("assets/sprites/enemy.png")) {
+		std::cout << "Could not load enemytexture!\n";
+	}
+
+	Enemy* enemy = new Enemy(*enemyTexture);
+	m_gos.push_back(enemy);
 }
 
 Game::~Game() {
