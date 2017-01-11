@@ -2,6 +2,8 @@
 #include "Player.h"
 #include "Enemy.h"
 
+Game* Game::s_Instance = 0;
+
 Game::Game() : m_FullScreen(false), m_Running(true) {
 	uint32 style = (m_FullScreen ? sf::Style::Fullscreen : sf::Style::Close);
 	m_Window.create({ 1280, 720, 32 }, "Invaders", style);
@@ -44,6 +46,11 @@ void Game::HandleEvents() {
 			} break;
 		}
 	}
+
+	std::vector<GameObject*>::iterator itr;
+	for (itr = m_gos.begin(); itr != m_gos.end(); itr++) {
+		(*itr)->HandleEvents();
+	}
 }
 
 void Game::Update() {
@@ -57,7 +64,7 @@ void Game::Update() {
 		for (uint32 i = 0; i < m_gos.size(); i++) {
 			if (m_gos[i] != *itr) {
 				if ((*itr)->CheckCollision(m_gos[i])) {
-					std::cout << "COLLISION" << std::endl;
+					//std::cout << "COLLISION" << std::endl;
 				}
 			}
 		}
@@ -76,6 +83,11 @@ void Game::LateUpdate() {
 		}
 	}
 
+	for (itr = m_AddingObjects.begin(); itr != m_AddingObjects.end(); itr++) {
+		m_gos.push_back(*itr);
+	}
+	m_AddingObjects.clear();
+
 	RestartClock();
 }
 
@@ -91,6 +103,10 @@ void Game::Draw() {
 
 void Game::Quit() {
 	m_Running = false;
+}
+
+void Game::AddGameObject(GameObject* object) {
+	m_AddingObjects.push_back(object);
 }
 
 const bool& Game::IsRunning() const {

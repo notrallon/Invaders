@@ -9,6 +9,8 @@ GameObject::GameObject(sf::Texture& texture) :
 
 GameObject::~GameObject() {}
 
+void GameObject::HandleEvents(){}
+
 bool GameObject::CheckCollision(GameObject* other) {
 	sf::Vector2f distVec = m_Sprite.getPosition() - other->m_Sprite.getPosition();
 	float distMag = sqrtf(distVec.x * distVec.x + distVec.y * distVec.y);

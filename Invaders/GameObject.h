@@ -8,6 +8,7 @@ struct GameObject {
 					GameObject(sf::Texture& texture);
 					~GameObject();
 
+	virtual void	HandleEvents();
 	virtual void	Update(float dt) = 0;
 	virtual bool	CheckCollision(GameObject* other);
 	void			Draw(sf::RenderWindow& window);

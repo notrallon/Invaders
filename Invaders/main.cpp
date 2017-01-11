@@ -21,14 +21,12 @@
 				🎮
 */
 
-int32 main() {
-	Game game;
-
-	while (game.IsRunning()) {
-		game.HandleEvents();
-		game.Update();
-		game.Draw();
-		game.LateUpdate();
+int32 main(int32 argc, char* argv[]) {
+	while (Game::Instance()->IsRunning()) {
+		Game::Instance()->HandleEvents();
+		Game::Instance()->Update();
+		Game::Instance()->Draw();
+		Game::Instance()->LateUpdate();
 	}
 
 	return 0;
