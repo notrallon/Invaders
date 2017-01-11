@@ -52,9 +52,30 @@ void Game::Update() {
 	for (itr = m_gos.begin(); itr != m_gos.end(); itr++) {
 		(*itr)->Update(m_ElapsedTime.asSeconds());
 	}
+
+	for (itr = m_gos.begin(); itr != m_gos.end(); itr++) {
+		for (uint32 i = 0; i < m_gos.size(); i++) {
+			if (m_gos[i] != *itr) {
+				if ((*itr)->CheckCollision(m_gos[i])) {
+					std::cout << "COLLISION" << std::endl;
+				}
+			}
+		}
+	}
 }
 
 void Game::LateUpdate() {
+	std::vector<GameObject*>::iterator itr;
+
+	for (itr = m_gos.begin(); itr != m_gos.end();) {
+		if ((*itr)->ShouldDestroy()) {
+			delete (*itr);
+			itr = m_gos.erase(itr);
+		} else {
+			itr++;
+		}
+	}
+
 	RestartClock();
 }
 

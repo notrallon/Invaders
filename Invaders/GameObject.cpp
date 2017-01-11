@@ -1,7 +1,10 @@
 #include "GameObject.h"
 
-GameObject::GameObject(sf::Texture& texture) : m_Sprite(texture), m_Destroy(false) {
-	m_Sprite.setOrigin(texture.getSize().x / 2, texture.getSize().y / 2);
+GameObject::GameObject(sf::Texture& texture) : 
+	m_Sprite(texture), 
+	m_Destroy(false), 
+	m_Texture(texture) {
+	m_Sprite.setOrigin(m_Texture.getSize().x / 2.0f, m_Texture.getSize().y / 2.0f);
 }
 
 GameObject::~GameObject() {}
@@ -26,6 +29,10 @@ void GameObject::SetPositionByVec2(const sf::Vector2f& vec) {
 
 void GameObject::SetPositionByValues(const float& x, const float& y) {
 	m_Sprite.setPosition(sf::Vector2f(x, y));
+}
+
+void GameObject::SetCollisionLayer(const CollisionLayers& layer) {
+	m_CollisionLayer = layer;
 }
 
 const int32& GameObject::GetCollisionLayer() const {

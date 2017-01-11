@@ -16,3 +16,6 @@ typedef int8_t		int8;
 typedef int16_t		int16;
 typedef int32_t		int32;
 typedef int64_t		int64;
+
+#define	PLAYER_MOVE_SPEED		250
+#define ENEMY_SHIP_MOVE_SPEED	250

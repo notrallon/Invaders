@@ -7,7 +7,8 @@ struct Enemy : public GameObject {
 					~Enemy();
 
 	virtual void	Update(float dt);
+	virtual bool	CheckCollision(GameObject* other);
 
 private:
-	int m_Dir;
+	int32 m_Dir;
 };
