@@ -7,7 +7,7 @@ Enemy::Enemy(sf::Texture& texture) : GameObject(texture), m_Dir(1) {
 Enemy::~Enemy() {}
 
 void Enemy::Update(float dt) {
-	m_Sprite.move(sf::Vector2f(m_Dir * (50.0f * dt), 0.0f));
+	m_Sprite.move(sf::Vector2f(m_Dir * (200.0f * dt), 0.0f * dt));
 
 	if ((m_Sprite.getPosition().x + (m_Sprite.getTexture()->getSize().x / 2.0f)) >= 1280) {
 		m_Dir = -1;

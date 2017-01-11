@@ -1,6 +1,6 @@
 #include "Player.h"
 
-#define MOVE_SPEED 50
+#define MOVE_SPEED 100
 
 Player::Player(sf::Texture& texture) : GameObject(texture) {
 	m_CollisionLayer = PLAYER;
