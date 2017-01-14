@@ -3,7 +3,7 @@
 #include "shared_defs.h"
 
 struct GameObject {
-	enum			CollisionLayers { PLAYER = 1, ENEMY, OTHER };
+	enum			CollisionLayers { NONE, PLAYER, ENEMY, OTHER };
 
 					GameObject(sf::Texture& texture);
 					~GameObject();

@@ -61,10 +61,12 @@ void Game::Update() {
 	}
 
 	for (itr = m_gos.begin(); itr != m_gos.end(); itr++) {
-		for (uint32 i = 0; i < m_gos.size(); i++) {
-			if (m_gos[i] != *itr) {
-				if ((*itr)->CheckCollision(m_gos[i])) {
-					//std::cout << "COLLISION" << std::endl;
+		if ((*itr)->GetCollisionLayer() != 0) {
+			for (uint32 i = 0; i < m_gos.size(); i++) {
+				if (m_gos[i] != *itr) {
+					if ((*itr)->CheckCollision(m_gos[i])) {
+						//std::cout << "COLLISION" << std::endl;
+					}
 				}
 			}
 		}
@@ -87,6 +89,8 @@ void Game::LateUpdate() {
 		m_gos.push_back(*itr);
 	}
 	m_AddingObjects.clear();
+
+//	std::cout << m_gos.size() << std::endl;
 
 	RestartClock();
 }

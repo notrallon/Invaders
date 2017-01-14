@@ -7,7 +7,9 @@ GameObject::GameObject(sf::Texture& texture) :
 	m_Sprite.setOrigin(m_Texture.getSize().x / 2.0f, m_Texture.getSize().y / 2.0f);
 }
 
-GameObject::~GameObject() {}
+GameObject::~GameObject() {
+	delete &m_Texture;
+}
 
 void GameObject::HandleEvents(){}
 

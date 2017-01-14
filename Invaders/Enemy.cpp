@@ -16,6 +16,10 @@ void Enemy::Update(float dt) {
 	else if ((m_Sprite.getPosition().x - (m_Sprite.getTexture()->getSize().x / 2.0f)) <= 0) {
 		m_Dir = 1;
 	}
+
+	if (m_LastShot < m_ReloadTime) {
+		m_LastShot += dt;
+	}
 }
 
 bool Enemy::CheckCollision(GameObject* other) {

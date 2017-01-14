@@ -19,3 +19,10 @@ typedef int64_t		int64;
 
 #define	PLAYER_MOVE_SPEED		250
 #define ENEMY_SHIP_MOVE_SPEED	250
+
+enum class direction_t {
+	UP,
+	DOWN,
+	LEFT,
+	RIGHT
+};

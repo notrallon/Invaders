@@ -8,4 +8,8 @@ struct Player : public GameObject {
 
 	virtual void	HandleEvents();
 	virtual void	Update(float dt);
+
+private:
+	float m_ReloadTime;
+	float m_LastShot;
 };

@@ -11,4 +11,6 @@ struct Enemy : public GameObject {
 
 private:
 	int32 m_Dir;
+	float m_ReloadTime;
+	float m_LastShot;
 };
