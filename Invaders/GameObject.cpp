@@ -2,25 +2,35 @@
 
 GameObject::GameObject(sf::Texture& texture) : 
 	m_Sprite(texture), 
-	m_Destroy(false), 
-	m_Texture(texture) {
-	m_Sprite.setOrigin(m_Texture.getSize().x / 2.0f, m_Texture.getSize().y / 2.0f);
+	m_Destroy(false) {
+	m_Sprite.setOrigin(texture.getSize().x / 2.0f, texture.getSize().y / 2.0f);
 }
 
 GameObject::~GameObject() {
-	delete &m_Texture;
 }
 
 void GameObject::HandleEvents(){}
 
 bool GameObject::CheckCollision(GameObject* other) {
-	sf::Vector2f distVec = m_Sprite.getPosition() - other->m_Sprite.getPosition();
+	if (m_CollisionLayer == other->GetCollisionLayer()) {
+		return false;
+	}
+
+	/*sf::Vector2f distVec = m_Sprite.getPosition() - other->m_Sprite.getPosition();
 	float distMag = sqrtf(distVec.x * distVec.x + distVec.y * distVec.y);
 
 	float radius = m_Sprite.getLocalBounds().width / 2.0f;
 	float otherRadius = other->m_Sprite.getLocalBounds().width / 2.0f;
 
-	return distMag < (radius + otherRadius);
+	return distMag < (radius + otherRadius);*/
+
+	bool collision = m_Sprite.getGlobalBounds().intersects(other->m_Sprite.getGlobalBounds());
+
+	if (collision) {
+		m_HealthPoints--;
+	}
+
+	return m_Sprite.getGlobalBounds().intersects(other->m_Sprite.getGlobalBounds());;
 }
 
 void GameObject::Draw(sf::RenderWindow& window) {

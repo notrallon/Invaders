@@ -23,7 +23,7 @@ struct GameObject {
 
 protected:
 	sf::Sprite		m_Sprite;
-	sf::Texture&	m_Texture;
 	bool			m_Destroy;
 	int32			m_CollisionLayer;
+	int32			m_HealthPoints;
 };

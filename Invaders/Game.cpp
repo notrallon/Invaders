@@ -1,31 +1,26 @@
 #include "Game.h"
 #include "Player.h"
 #include "Enemy.h"
+#include "TextureManager.h"
 
 Game* Game::s_Instance = 0;
 
 Game::Game() : m_FullScreen(false), m_Running(true) {
 	uint32 style = (m_FullScreen ? sf::Style::Fullscreen : sf::Style::Close);
 	m_Window.create({ 1280, 720, 32 }, "Invaders", style);
-	m_Window.setFramerateLimit(125);
+//	m_Window.setFramerateLimit(125);
 
-	sf::Texture* playerTexture = new sf::Texture;
-	if (!playerTexture->loadFromFile("assets/sprites/ship.png")) {
-		std::cout << "Could not load playertexture!\n";
-	}
+	TextureManager::Instance()->LoadTexture("assets/sprites/ship.png", "PlayerShip");
+	TextureManager::Instance()->LoadTexture("assets/sprites/enemy.png", "EnemyShip");
+	TextureManager::Instance()->LoadTexture("assets/sprites/bullet.png", "Bullet");
 
-	Player* player = new Player(*playerTexture);
+	Player* player = new Player(TextureManager::Instance()->GetTexture("PlayerShip"));
 	m_gos.push_back(player);
 
-	sf::Texture* enemyTexture = new sf::Texture;
-	if (!enemyTexture->loadFromFile("assets/sprites/enemy.png")) {
-		std::cout << "Could not load enemytexture!\n";
-	}
-
-	Enemy* enemy = new Enemy(*enemyTexture);
+	Enemy* enemy = new Enemy(TextureManager::Instance()->GetTexture("EnemyShip"));
 	m_gos.push_back(enemy);
 
-	enemy = new Enemy(*enemyTexture);
+	enemy = new Enemy(TextureManager::Instance()->GetTexture("EnemyShip"));
 	enemy->SetPositionByValues(250, 250);
 	m_gos.push_back(enemy);
 }
@@ -65,7 +60,7 @@ void Game::Update() {
 			for (uint32 i = 0; i < m_gos.size(); i++) {
 				if (m_gos[i] != *itr) {
 					if ((*itr)->CheckCollision(m_gos[i])) {
-						//std::cout << "COLLISION" << std::endl;
+//						std::cout << "COLLISION" << std::endl;
 					}
 				}
 			}
@@ -78,6 +73,7 @@ void Game::LateUpdate() {
 
 	for (itr = m_gos.begin(); itr != m_gos.end();) {
 		if ((*itr)->ShouldDestroy()) {
+//			std::cout << "DESTROY\n";
 			delete (*itr);
 			itr = m_gos.erase(itr);
 		} else {
