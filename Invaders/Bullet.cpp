@@ -1,4 +1,5 @@
 #include "Bullet.h"
+#include "Game.h"
 
 #define BULLET_SPEED 400
 
@@ -20,8 +21,8 @@ void Bullet::Update(float dt) {
 		m_Destroy = true;
 	}
 	// Destroy the bullet if it's outside the screen
-	if (m_Sprite.getPosition().x < 0 || m_Sprite.getPosition().x > 1280 ||
-		m_Sprite.getPosition().y < 0 || m_Sprite.getPosition().y > 720) {
+	if (m_Sprite.getPosition().x < 0 || m_Sprite.getPosition().x > Game::Instance()->GetWindow().getSize().x ||
+		m_Sprite.getPosition().y < 0 || m_Sprite.getPosition().y > Game::Instance()->GetWindow().getSize().y) {
 		m_Destroy = true;
 	}
 

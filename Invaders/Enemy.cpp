@@ -20,7 +20,7 @@ void Enemy::Update(float dt) {
 		m_Destroy = true;
 	}
 
-	if ((m_Sprite.getPosition().x + (m_Sprite.getTexture()->getSize().x / 2.0f)) >= 1280) {
+	if ((m_Sprite.getPosition().x + (m_Sprite.getTexture()->getSize().x / 2.0f)) >= Game::Instance()->GetWindow().getSize().x) {
 		m_Dir = -1;
 	}
 	else if ((m_Sprite.getPosition().x - (m_Sprite.getTexture()->getSize().x / 2.0f)) <= 0) {

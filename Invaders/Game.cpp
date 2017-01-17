@@ -8,7 +8,7 @@ Game* Game::s_Instance = 0;
 Game::Game() : m_FullScreen(false), m_Running(true) {
 	uint32 style = (m_FullScreen ? sf::Style::Fullscreen : sf::Style::Close);
 	m_Window.create({ 1280, 720, 32 }, "Invaders", style);
-//	m_Window.setFramerateLimit(125);
+	m_Window.setFramerateLimit(125);
 
 	TextureManager::Instance()->LoadTexture("assets/sprites/ship.png", "PlayerShip");
 	TextureManager::Instance()->LoadTexture("assets/sprites/enemy.png", "EnemyShip");
