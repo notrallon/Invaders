@@ -54,5 +54,5 @@ const int32& GameObject::GetCollisionLayer() const {
 }
 
 const bool& GameObject::ShouldDestroy() const {
-	return m_Destroy;
+	return m_HealthPoints <= 0;
 }

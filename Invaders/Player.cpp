@@ -6,7 +6,7 @@
 Player::Player(sf::Texture& texture) : GameObject(texture), m_ReloadTime(0.5f), m_LastShot(0.0f) {
 	m_CollisionLayer = PLAYER;
 	m_Sprite.setPosition(300, 300);
-	m_HealthPoints = 2;
+	m_HealthPoints = 4;
 }
 
 Player::~Player(){}
