@@ -6,7 +6,7 @@ struct GameObject {
 	enum			CollisionLayers { NONE, PLAYER, ENEMY, OTHER };
 
 					GameObject(sf::Texture& texture);
-					~GameObject();
+	virtual			~GameObject() {}
 
 	virtual void	HandleEvents();
 	virtual void	Update(float dt) = 0;
@@ -19,6 +19,8 @@ struct GameObject {
 
 	const int32&	GetCollisionLayer() const;
 	const bool&		ShouldDestroy() const;
+
+	virtual void	Destroy();
 
 
 protected:

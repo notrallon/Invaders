@@ -6,9 +6,6 @@ GameObject::GameObject(sf::Texture& texture) :
 	m_Sprite.setOrigin(texture.getSize().x / 2.0f, texture.getSize().y / 2.0f);
 }
 
-GameObject::~GameObject() {
-}
-
 void GameObject::HandleEvents(){}
 
 bool GameObject::CheckCollision(GameObject* other) {
@@ -54,5 +51,9 @@ const int32& GameObject::GetCollisionLayer() const {
 }
 
 const bool& GameObject::ShouldDestroy() const {
-	return m_HealthPoints <= 0;
+	return (m_HealthPoints <= 0) || m_Destroy;
+}
+
+void GameObject::Destroy() {
+	delete this;
 }

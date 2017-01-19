@@ -13,6 +13,9 @@ struct Game {
 		return s_Instance;
 	}
 
+	void						Init();
+	void						Restart();
+
 	void						HandleEvents();
 	void						Update();
 	void						LateUpdate();
@@ -20,6 +23,7 @@ struct Game {
 	void						Quit();
 
 	void						AddGameObject(GameObject* object);
+	void						AddShake(int32 val);
 
 	const bool&					IsRunning() const;
 	const sf::RenderWindow&		GetWindow() const;
@@ -31,12 +35,18 @@ private:
 	sf::RenderWindow			m_Window;
 	sf::Clock					m_Clock;
 	sf::Time					m_ElapsedTime;
+	sf::View					m_View;
 
 	bool						m_FullScreen;
 	bool						m_Running;
+	bool						m_Restart;
 
 	std::vector<GameObject*>	m_gos;
 	std::vector<GameObject*>	m_AddingObjects;
+
+	// Screenshake variables
+	int32						m_Shake;
+	const int32					SHAKE_MAX = 10;
 
 	void						RestartClock();
 };

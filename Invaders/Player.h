@@ -4,11 +4,11 @@
 
 struct Player : public GameObject {
 					Player(sf::Texture& texture);
-					~Player();
+	virtual			~Player();
 
 	virtual void	HandleEvents();
 	virtual void	Update(float dt);
-
+	virtual void	Destroy();
 private:
 	float m_ReloadTime;
 	float m_LastShot;

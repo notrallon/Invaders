@@ -9,7 +9,8 @@ Player::Player(sf::Texture& texture) : GameObject(texture), m_ReloadTime(0.5f), 
 	m_HealthPoints = 4;
 }
 
-Player::~Player(){}
+Player::~Player(){
+}
 
 void Player::HandleEvents() {
  	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && m_LastShot >= m_ReloadTime) {
@@ -17,13 +18,14 @@ void Player::HandleEvents() {
 		bullet->SetCollisionLayer(PLAYER);
 
 		Game::Instance()->AddGameObject(bullet);
+		Game::Instance()->AddShake(10);
 		m_LastShot = 0;
 	}
 }
 
 void Player::Update(float dt) {
 	if (m_HealthPoints <= 0) {
-		m_Destroy = true;
+		Game::Instance()->Restart();
 	}
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
@@ -41,4 +43,8 @@ void Player::Update(float dt) {
 	if (m_LastShot < m_ReloadTime) {
 		m_LastShot += dt;
 	}
+}
+
+void Player::Destroy() {
+	Game::Instance()->Restart();
 }
