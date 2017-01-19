@@ -1,4 +1,5 @@
 #include "GameObject.h"
+#include "Game.h"
 
 GameObject::GameObject(sf::Texture& texture) : 
 	m_Sprite(texture), 
@@ -25,6 +26,7 @@ bool GameObject::CheckCollision(GameObject* other) {
 
 	if (collision) {
 		m_HealthPoints--;
+		Game::Instance()->AddShake(10);
 	}
 
 	return m_Sprite.getGlobalBounds().intersects(other->m_Sprite.getGlobalBounds());;
