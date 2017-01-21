@@ -30,7 +30,7 @@ void Enemy::Update(float dt) {
 	if (m_LastShot < m_ReloadTime) {
 		m_LastShot += dt;
 	} else {
-		Bullet* bullet = new Bullet(TextureManager::Instance()->GetTexture("Bullet"), m_Sprite.getPosition(), direction_t::DOWN);
+		Bullet* bullet = new Bullet(TextureManager::Instance()->GetTexture("EnemyBullet"), m_Sprite.getPosition(), direction_t::DOWN);
 		bullet->SetCollisionLayer(ENEMY);
 
 		Game::Instance()->AddGameObject(bullet);

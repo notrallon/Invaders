@@ -33,6 +33,7 @@ void Bullet::Update(float dt) {
 		
 		case direction_t::DOWN: {
 			m_Sprite.move(sf::Vector2f(0.0f, BULLET_SPEED * dt));
+			m_Sprite.setRotation(180);
 		} break;
 		
 		case direction_t::LEFT: {

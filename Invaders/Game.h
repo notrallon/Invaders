@@ -7,7 +7,7 @@ struct Game {
 								~Game();
 
 	static Game* Instance() {
-		if (!s_Instance) {
+		if (s_Instance == 0) {
 			s_Instance = new Game();
 		}
 		return s_Instance;
@@ -41,12 +41,22 @@ private:
 	bool						m_Running;
 	bool						m_Restart;
 
+	// Game object vectors
 	std::vector<GameObject*>	m_gos;
-	std::vector<GameObject*>	m_AddingObjects;
+	std::vector<GameObject*>	m_ObjectsToAdd; // Temporary holds objects and adds them at the end of each update
 
 	// Screenshake variables
 	int32						m_Shake;
+	int32						m_ShakeX;
+	int32						m_ShakeY;
+	float						m_DefaultX;
+	float						m_DefaultY;
 	const int32					SHAKE_MAX = 10;
 
+	// Enemy spawn variables
+	float						m_RespawnTime;
+	float						m_LastEnemy;
+
 	void						RestartClock();
+	bool						SpawnEnemy(const float& dt);
 };

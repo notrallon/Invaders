@@ -26,7 +26,7 @@ bool GameObject::CheckCollision(GameObject* other) {
 
 	if (collision) {
 		m_HealthPoints--;
-		Game::Instance()->AddShake(10);
+		Game::Instance()->AddShake(5);
 	}
 
 	return m_Sprite.getGlobalBounds().intersects(other->m_Sprite.getGlobalBounds());;
