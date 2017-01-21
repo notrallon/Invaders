@@ -6,6 +6,7 @@
 #include <vector>
 
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 
 typedef uint8_t		uint8;
 typedef uint16_t	uint16;

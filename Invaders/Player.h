@@ -12,4 +12,7 @@ struct Player : public GameObject {
 private:
 	float m_ReloadTime;
 	float m_LastShot;
+
+	sf::Sound m_ShootSound;
+	sf::SoundBuffer m_ShootBuffer;
 };
