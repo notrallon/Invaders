@@ -3,6 +3,8 @@
 #include "shared_defs.h"
 #include "GameObject.h"
 
+struct Player;
+
 struct Game {
 								~Game();
 
@@ -24,6 +26,7 @@ struct Game {
 
 	void						AddGameObject(GameObject* object);
 	void						AddShake(int32 val);
+	void						AddScore(int32 val);
 
 	const bool&					IsRunning() const;
 	const sf::RenderWindow&		GetWindow() const;
@@ -35,14 +38,19 @@ private:
 	sf::RenderWindow			m_Window;
 	sf::Clock					m_Clock;
 	sf::Time					m_ElapsedTime;
-	sf::View					m_View;
+	sf::View					m_GameView;
+	sf::View					m_HUDView;
 
 	bool						m_FullScreen;
 	bool						m_Running;
 	bool						m_Restart;
 
+	Player*						m_Player;
+
+	uint32						m_Score;
+
 	// Game object vectors
-	std::vector<GameObject*>	m_gos;
+	std::vector<GameObject*>	m_GameObjects;
 	std::vector<GameObject*>	m_ObjectsToAdd; // Temporary holds objects and adds them at the end of each update
 
 	// Screenshake variables
@@ -51,11 +59,19 @@ private:
 	int32						m_ShakeY;
 	float						m_DefaultX;
 	float						m_DefaultY;
-	const int32					SHAKE_MAX = 10;
 
 	// Enemy spawn variables
-	float						m_RespawnTime;
-	float						m_LastEnemy;
+	float						m_RespawnRate;
+	float						m_LastEnemySpawn;
+
+	// Variables to increase difficulty over time
+	float						m_IncreaseDiffRate;
+	float						m_DifficultyTimer;
+
+	// Font & Text
+	sf::Font					m_FontHUD;
+	sf::Text					m_TextScore;
+	sf::Text					m_TextLife;
 
 	void						RestartClock();
 	bool						SpawnEnemy(const float& dt);

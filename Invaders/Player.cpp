@@ -19,25 +19,31 @@ Player::Player(sf::Texture& texture) : GameObject(texture), m_ReloadTime(0.3f), 
 Player::~Player(){
 }
 
-void Player::HandleEvents() {
- 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && m_LastShot >= m_ReloadTime) {
-		Bullet* bullet = new Bullet(TextureManager::Instance()->GetTexture("PlayerBullet"), m_Sprite.getPosition(), direction_t::UP);
-		bullet->SetCollisionLayer(PLAYER);
+void Player::Update(float dt) {
+	// Add delta time to our lastshot
+	if (m_LastShot < m_ReloadTime) {
+		m_LastShot += dt;
+	}
+
+	// Add a bullet  to the game if player is pressing space and if it has reloaded.
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && m_LastShot >= m_ReloadTime) {
+		Bullet* bullet = new Bullet(TextureManager::Instance()->GetTexture("PlayerBullet"), 
+									m_Sprite.getPosition(), direction_t::UP, m_CollisionLayer);
 
 		Game::Instance()->AddGameObject(bullet);
 		Game::Instance()->AddShake(10);
 
-		m_LastShot = 0;
+		// It's 0 seconds since last time we shot
+		m_LastShot = 0.0f;
 		m_ShootSound.play();
 	}
 
-}
-
-void Player::Update(float dt) {
+	// Restart the game if our health is 0
 	if (m_HealthPoints <= 0) {
 		Game::Instance()->Restart();
 	}
 
+	// Movement
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
 		m_Sprite.move(0, -PLAYER_MOVE_SPEED * dt);
 	}
@@ -51,11 +57,12 @@ void Player::Update(float dt) {
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
 		m_Sprite.move(-PLAYER_MOVE_SPEED * dt, 0);
 	}
-	if (m_LastShot < m_ReloadTime) {
-		m_LastShot += dt;
-	}
 }
 
 void Player::Destroy() {
-	Game::Instance()->Restart();
+	Game::Instance()->Restart(); // Restart game
+}
+
+const int32& Player::GetLife() const {
+	return m_HealthPoints;
 }

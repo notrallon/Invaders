@@ -4,8 +4,6 @@
 #include <map>
 
 struct TextureManager {
-//	typedef std::map<std::string, sf::Texture&>::iterator TextMapItr;
-	
 	~TextureManager();
 
 	static TextureManager* Instance() {
@@ -15,7 +13,7 @@ struct TextureManager {
 		return s_Instance;
 	}
 
-	void				LoadTexture(const std::string& path, std::string id);
+	void			LoadTexture(const std::string& path, std::string id);
 	sf::Texture&	GetTexture(const std::string& id) const;
 
 private:

@@ -4,6 +4,9 @@ TextureManager* TextureManager::s_Instance = 0;
 
 TextureManager::~TextureManager() {}
 
+// LoadTexture attempts to load in a texture to memory from a path
+// if it's successful it adds the texture to our map and gives it an ID
+// as key.
 void TextureManager::LoadTexture(const std::string& path, std::string id) {
 	auto mit = m_TextureMap.find(id);
 
@@ -21,6 +24,8 @@ void TextureManager::LoadTexture(const std::string& path, std::string id) {
 	}
 }
 
+// GetTexture attempts to find a texture from a map
+// and sends it back as a reference.
 sf::Texture& TextureManager::GetTexture(const std::string& id) const {
 	auto mit = m_TextureMap.find(id);
 

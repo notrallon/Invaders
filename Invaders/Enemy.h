@@ -7,13 +7,9 @@ struct Enemy : public GameObject {
 					~Enemy();
 
 	virtual void	Update(float dt);
-	virtual bool	CheckCollision(GameObject* other);
 
 private:
-	int32 m_Dir;
-	float m_ReloadTime;
-	float m_LastShot;
-
-	sf::Sound		m_ShootSound;
-	sf::SoundBuffer m_ShootBuffer;
+	int32			m_Dir;
+	float			m_ReloadTime;
+	float			m_LastShot;
 };

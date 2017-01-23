@@ -1,4 +1,5 @@
 #include <ctime>
+#include <sstream>
 
 #include "Game.h"
 #include "Player.h"
@@ -7,13 +8,22 @@
 
 Game* Game::s_Instance = 0;
 
-Game::Game() : m_FullScreen(false), m_Running(true), m_Restart(false), m_Shake(10) {
+#define DIFFICULTY_INCREASE_RATE 15.0f
+
+Game::Game() : 
+	m_FullScreen(false), 
+	m_Running(true), 
+	m_Restart(false), 
+	m_Shake(1) {
 	uint32 style = (m_FullScreen ? sf::Style::Fullscreen : sf::Style::Close);
 	m_Window.create({ 1280, 720, 32 }, "Invaders", style);
-	m_Window.setFramerateLimit(125);
-	m_View.setSize(sf::Vector2f(m_Window.getSize()));
-	m_View.setCenter(m_Window.getSize().x / 2.0f, m_Window.getSize().y / 2.0f);
+	m_Window.setFramerateLimit(60);
+	m_GameView.setSize(sf::Vector2f(m_Window.getSize()));
+	m_GameView.setCenter(m_Window.getSize().x / 2.0f, m_Window.getSize().y / 2.0f);
+	m_HUDView.setSize(sf::Vector2f(m_Window.getSize()));
+	m_HUDView.setCenter(m_Window.getSize().x / 2.0f, m_Window.getSize().y / 2.0f);
 
+	// Load all the textures we're going to need
 	TextureManager::Instance()->LoadTexture("assets/sprites/playerShip1_orange.png", "PlayerShip");
 	TextureManager::Instance()->LoadTexture("assets/sprites/enemyBlack2.png", "EnemyShip");
 	TextureManager::Instance()->LoadTexture("assets/sprites/laserRed01.png", "EnemyBullet");
@@ -21,6 +31,17 @@ Game::Game() : m_FullScreen(false), m_Running(true), m_Restart(false), m_Shake(1
 
 	m_DefaultX = m_Window.getSize().x / 2.0f;
 	m_DefaultY = m_Window.getSize().y / 2.0f;
+
+	if (!m_FontHUD.loadFromFile("assets/fonts/kenvector_future.ttf")) {
+		std::cout << "Could not load font kenvector_future.ttf\n";
+	}
+
+	m_TextLife.setFont(m_FontHUD);
+	m_TextLife.setPosition(sf::Vector2f(45, 30));
+	m_TextLife.setString("Life: ");
+	m_TextScore.setFont(m_FontHUD);
+	m_TextScore.setPosition(sf::Vector2f(m_Window.getSize().x / 2.0f, 30.0f));
+	m_TextScore.setString("Score: ");
 
 	Init();
 }
@@ -30,19 +51,15 @@ Game::~Game() {
 
 void Game::Init() {
 	srand(time(NULL));
-	m_Restart = false;
-	Player* player = new Player(TextureManager::Instance()->GetTexture("PlayerShip"));
-	m_gos.push_back(player);
+	m_RespawnRate		= 3.0f;
+	m_LastEnemySpawn	= 0.0f;
+	m_IncreaseDiffRate	= 15.0f;
+	m_DifficultyTimer	= 0.0f;
+	m_Score				= 0;
+	m_Restart			= false;
+	m_Player			= new Player(TextureManager::Instance()->GetTexture("PlayerShip"));
+	m_GameObjects.push_back(m_Player);
 
-	Enemy* enemy = new Enemy(TextureManager::Instance()->GetTexture("EnemyShip"));
-	m_gos.push_back(enemy);
-
-	enemy = new Enemy(TextureManager::Instance()->GetTexture("EnemyShip"));
-	enemy->SetPositionByValues(250, 250);
-	m_gos.push_back(enemy);
-
-	m_RespawnTime = 3;
-	m_LastEnemy = 0;
 }
 
 void Game::Restart() {
@@ -62,93 +79,98 @@ void Game::HandleEvents() {
 			} break;
 		}
 	}
-
-	std::vector<GameObject*>::iterator itr;
-	for (itr = m_gos.begin(); itr != m_gos.end(); itr++) {
-		(*itr)->HandleEvents();
-	}
 }
 
 void Game::Update() {
-	std::vector<GameObject*>::iterator itr;
+	std::vector<GameObject*>::iterator itr; // GameObject iterator
 	float dt = m_ElapsedTime.asSeconds();
-
-	if (m_Shake > 0) {
-		m_ShakeX = rand() % (m_Shake * 2) - m_Shake;
-		m_ShakeY = rand() % (m_Shake * 2) - m_Shake;
-		/*sf::FloatRect pos(m_View.getViewport().left + (rand() % (m_Shake * 2)) - m_Shake, 
-						  m_View.getViewport().top + (rand() % (m_Shake * 2)) - m_Shake, 
-						  m_Window.getSize().x, 
-						  m_Window.getSize().y);
-		m_View.reset(pos);*/
-		m_Shake -= dt;
-	}
-
-	float ViewX = m_View.getViewport().width;
-	float ViewY = m_View.getViewport().height;
-
-	ViewX += ((m_DefaultX - m_View.getViewport().width * 0.5f) - m_View.getViewport().left) * 0.1 + m_ShakeX;
-	ViewY += ((m_DefaultY - m_View.getViewport().height * 0.5f) - m_View.getViewport().top) * 0.1 + m_ShakeY;
-
-	sf::FloatRect pos(ViewX / 2,
-					  ViewY / 2,
-					  m_Window.getSize().x,
-					  m_Window.getSize().y);
-	m_View.reset(pos);
-
-
-
-	for (itr = m_gos.begin(); itr != m_gos.end(); itr++) {
-		(*itr)->Update(dt);
-	}
-
-	for (itr = m_gos.begin(); itr != m_gos.end(); itr++) {
-		if ((*itr)->GetCollisionLayer() != 0) {
-			for (uint32 i = 0; i < m_gos.size(); i++) {
-				if (m_gos[i] != *itr) {
-					if ((*itr)->CheckCollision(m_gos[i])) {
-//						std::cout << "COLLISION" << std::endl;
-					}
-				}
-			}
-		}
-	}
+	m_DifficultyTimer += dt;
 
 	// Spawn Enemy
 	if (SpawnEnemy(dt)) {
 		Enemy* enemy = new Enemy(TextureManager::Instance()->GetTexture("EnemyShip"));
-		enemy->SetPositionByValues(rand() % m_Window.getSize().x, 0);
+		enemy->SetPosition(rand() % m_Window.getSize().x, 0);
 		AddGameObject(enemy);
-		m_LastEnemy = 0;
+		m_LastEnemySpawn = 0;
+	}
+
+	// Check if we should reduce the respawnrate
+	if (m_DifficultyTimer > DIFFICULTY_INCREASE_RATE) {
+		m_DifficultyTimer -= DIFFICULTY_INCREASE_RATE;
+		m_RespawnRate *= 0.9f; // Decrease the time between spawning enemies by 10 percent
+	}
+
+	std::stringstream strstream;
+	strstream << "Life: " << m_Player->GetLife() << std::endl;
+	m_TextLife.setString(strstream.str());
+
+	strstream.str("");
+
+	strstream << "Score: " << m_Score;
+	m_TextScore.setString(strstream.str());
+
+	// Add shake if shake is greater than 0
+	if (m_Shake > 0) {
+		m_ShakeX = rand() % (m_Shake * 2) - m_Shake;
+		m_ShakeY = rand() % (m_Shake * 2) - m_Shake;
+		m_Shake--;
+	}
+
+	// Calculate view
+	float ViewX = m_GameView.getViewport().width;
+	float ViewY = m_GameView.getViewport().height;
+	
+	ViewX += m_ShakeX;
+	ViewY += m_ShakeY;
+
+	sf::FloatRect pos(ViewX / 2.0f,
+					  ViewY / 2.0f,
+					  m_Window.getSize().x,
+					  m_Window.getSize().y);
+	m_GameView.reset(pos);
+
+	// Update all objects
+	for (itr = m_GameObjects.begin(); itr != m_GameObjects.end(); itr++) {
+		(*itr)->Update(dt);
+	}
+
+	// Check all objects for collision
+	for (itr = m_GameObjects.begin(); itr != m_GameObjects.end(); itr++) {
+		for (auto itr2 = itr + 1; itr2 != m_GameObjects.end(); itr2++) {
+			if ((*itr)->CheckCollision(*itr2)) {
+				(*itr)->TakeDamage(1);
+				(*itr2)->TakeDamage(1);
+				AddShake(5);
+			}
+		}
 	}
 }
 
 void Game::LateUpdate() {
 	std::vector<GameObject*>::iterator itr;
 
-	for (itr = m_gos.begin(); itr != m_gos.end();) {
+	for (itr = m_GameObjects.begin(); itr != m_GameObjects.end();) {
 		if ((*itr)->ShouldDestroy()) {
-//			std::cout << "DESTROY\n";
 			(*itr)->Destroy();
-			itr = m_gos.erase(itr);
+			itr = m_GameObjects.erase(itr);
 		} else {
 			itr++;
 		}
 	}
 
 	for (itr = m_ObjectsToAdd.begin(); itr != m_ObjectsToAdd.end(); itr++) {
-		m_gos.push_back(*itr);
+		m_GameObjects.push_back(*itr);
 	}
 	m_ObjectsToAdd.clear();
 
-//	std::cout << m_gos.size() << std::endl;
-
 	if (m_Restart) {
-		for (itr = m_gos.begin(); itr != m_gos.end(); ) {
+		// Delete all objects before restarting the game
+		for (itr = m_GameObjects.begin(); itr != m_GameObjects.end(); ) {
 			(*itr)->Destroy();
-			itr = m_gos.erase(itr);
+			itr = m_GameObjects.erase(itr);
 		}
-		m_gos.clear();
+		m_GameObjects.clear();
+		// Run init to start the game from scratch
 		Init();
 	}
 
@@ -158,11 +180,16 @@ void Game::LateUpdate() {
 void Game::Draw() {
 	m_Window.clear();
 	std::vector<GameObject*>::iterator itr;
+	m_Window.setView(m_GameView);
 
-	for (itr = m_gos.begin(); itr != m_gos.end(); itr++) {
+	for (itr = m_GameObjects.begin(); itr != m_GameObjects.end(); itr++) {
 		(*itr)->Draw(m_Window);
 	}
-	m_Window.setView(m_View);
+
+	m_Window.setView(m_HUDView);
+	m_Window.draw(m_TextLife);
+	m_Window.draw(m_TextScore);
+
 	m_Window.display();
 }
 
@@ -178,6 +205,10 @@ void Game::AddShake(int32 val) {
 	m_Shake += val;
 }
 
+void Game::AddScore(int32 val) {
+	m_Score += val;
+}
+
 const bool& Game::IsRunning() const {
 	return m_Running;
 }
@@ -191,7 +222,7 @@ void Game::RestartClock() {
 }
 
 bool Game::SpawnEnemy(const float& dt) {
-	m_LastEnemy += dt;
+	m_LastEnemySpawn += dt;
 
-	return m_LastEnemy > m_RespawnTime;
+	return m_LastEnemySpawn > m_RespawnRate;
 }
